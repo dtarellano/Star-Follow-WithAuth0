@@ -39,7 +39,7 @@ const strategy = new Auth0Strategy(
       },
       json: true
     };
-
+    // Fetches Access Token to retrieve User's Github Token
     request(options, function(error, response, body) {
       if (error) throw new Error(error);
       let access_token = body.access_token;
@@ -49,13 +49,14 @@ const strategy = new Auth0Strategy(
         url: `https://${proccess.env.AUTH0_DOMAIN}/api/v2/users/${profile.id}`,
         headers: { authorization: `Bearer ${access_token}` }
       };
+      // Use Access token to retrieve Users token
       request(options, function(error, response, body) {
         if (error) throw new Error(error);
 
         const token = JSON.parse(body).identities[0].access_token;
         const user = 'USER_OF_REPO';
         const repo = 'REPO_OF_USER';
-        // STAR A REPO
+        // Have User star the repo you want
         axios
           .put(
             `https://api.github.com/user/starred/${user}/${repo}`,
@@ -71,7 +72,7 @@ const strategy = new Auth0Strategy(
           })
           .catch(err => console.log('ERROR: ', err));
 
-        // FOLLOW A USER
+        // Have the user Follow who you want
         const follow = 'USER_TO_FOLLOW';
         axios
           .put(
