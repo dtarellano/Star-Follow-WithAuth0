@@ -33,8 +33,8 @@ const strategy = new Auth0Strategy(
       headers: { 'content-type': 'application/json' },
       body: {
         grant_type: 'client_credentials',
-        client_id: process.env.WUT,
-        client_secret: process.env.WUT_WUT,
+        client_id: process.env.API_CLIENT,
+        client_secret: process.env.API_CLIENT_SECRET,
         audience: `https:/${process.env.AUTH0_DOMAIN}/api/v2/`
       },
       json: true
