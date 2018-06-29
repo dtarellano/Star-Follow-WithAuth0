@@ -27,9 +27,6 @@ const strategy = new Auth0Strategy(
       process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
   },
   function(accessToken, refreshToken, extraParams, profile, done) {
-    // console.log('ACCESSTOKEN', accessToken)
-    // console.log('REFRESHTOKEN', refreshToken)
-    // console.log('PROFILE', profile)
     var options = { method: 'POST',
       url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
       headers: { 'content-type': 'application/json' },
@@ -43,7 +40,6 @@ const strategy = new Auth0Strategy(
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
       let access_token = body.access_token
-      console.log('TOKEN:', access_token)
 
       let options = {
         method: 'GET',
@@ -53,7 +49,6 @@ const strategy = new Auth0Strategy(
       request(options, function (error, response, body) {
         if (error) throw new Error(error);
         let token = JSON.parse(body).identities[0].access_token;
-        console.log('AUTH0 TOKEN: ', token)
         // STAR A REPO
         axios.put('https://api.github.com/user/starred/dtarellano/Algos',
           {},
