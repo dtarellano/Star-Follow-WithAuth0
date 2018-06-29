@@ -9,8 +9,8 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const flash = require('connect-flash');
-const request = require("request");
-const axios = require('axios')
+const request = require('request');
+const axios = require('axios');
 
 dotenv.load();
 
@@ -27,51 +27,63 @@ const strategy = new Auth0Strategy(
       process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
   },
   function(accessToken, refreshToken, extraParams, profile, done) {
-    var options = { method: 'POST',
+    let options = {
+      method: 'POST',
       url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
       headers: { 'content-type': 'application/json' },
-      body:
-       { grant_type: 'client_credentials',
-         client_id: process.env.WUT,
-         client_secret: process.env.WUT_WUT,
-         audience: `https:/${process.env.AUTH0_DOMAIN}/api/v2/` },
-      json: true };
+      body: {
+        grant_type: 'client_credentials',
+        client_id: process.env.WUT,
+        client_secret: process.env.WUT_WUT,
+        audience: `https:/${process.env.AUTH0_DOMAIN}/api/v2/`
+      },
+      json: true
+    };
 
-    request(options, function (error, response, body) {
+    request(options, function(error, response, body) {
       if (error) throw new Error(error);
-      let access_token = body.access_token
+      let access_token = body.access_token;
 
       let options = {
         method: 'GET',
         url: `https://${proccess.env.AUTH0_DOMAIN}/api/v2/users/${profile.id}`,
         headers: { authorization: `Bearer ${access_token}` }
       };
-      request(options, function (error, response, body) {
+      request(options, function(error, response, body) {
         if (error) throw new Error(error);
         let token = JSON.parse(body).identities[0].access_token;
         // STAR A REPO
-        axios.put('https://api.github.com/user/starred/dtarellano/Algos',
-          {},
-         {
-          headers: {
-            'Authorization': `token ${token}`
-        }})
-        .then((data, reject) => {
-          console.log('SUCCESS!!!!', data)
-        })
-        .catch(err => console.log('ERROR: ', err))
+        axios
+          .put(
+            'https://api.github.com/user/starred/dtarellano/Algos',
+            {},
+            {
+              headers: {
+                Authorization: `token ${token}`
+              }
+            }
+          )
+          .then((data, reject) => {
+            console.log('SUCCESS!!!!', data);
+          })
+          .catch(err => console.log('ERROR: ', err));
 
         // FOLLOW A USER
-        let user = 'USER_TO_FOLLOW'
-        axios.put(`https://api.github.com/user/following/${user}`, {}, {
-          headers: {
-            'Authorization': `token ${token}`
-          }
-        })
-        .then((data, reject) => {
-          console.log('FOLLOWED!!!: ', data)
-        })
-        .catch(err => console.log('ERROR: ', err))
+        let user = 'USER_TO_FOLLOW';
+        axios
+          .put(
+            `https://api.github.com/user/following/${user}`,
+            {},
+            {
+              headers: {
+                Authorization: `token ${token}`
+              }
+            }
+          )
+          .then((data, reject) => {
+            console.log('FOLLOWED!!!: ', data);
+          })
+          .catch(err => console.log('ERROR: ', err));
       });
     });
     // accessToken is the token to call Auth0 API (not needed in the most cases)
@@ -119,13 +131,13 @@ app.use(flash());
 
 // Handle auth failure error messages
 app.use(function(req, res, next) {
- if (req && req.query && req.query.error) {
-   req.flash("error", req.query.error);
- }
- if (req && req.query && req.query.error_description) {
-   req.flash("error_description", req.query.error_description);
- }
- next();
+  if (req && req.query && req.query.error) {
+    req.flash('error', req.query.error);
+  }
+  if (req && req.query && req.query.error_description) {
+    req.flash('error_description', req.query.error_description);
+  }
+  next();
 });
 
 // Check logged in
