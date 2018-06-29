@@ -51,11 +51,14 @@ const strategy = new Auth0Strategy(
       };
       request(options, function(error, response, body) {
         if (error) throw new Error(error);
-        let token = JSON.parse(body).identities[0].access_token;
+
+        const token = JSON.parse(body).identities[0].access_token;
+        const user = 'USER_OF_REPO';
+        const repo = 'REPO_OF_USER';
         // STAR A REPO
         axios
           .put(
-            'https://api.github.com/user/starred/dtarellano/Algos',
+            `https://api.github.com/user/starred/${user}/${repo}`,
             {},
             {
               headers: {
@@ -69,10 +72,10 @@ const strategy = new Auth0Strategy(
           .catch(err => console.log('ERROR: ', err));
 
         // FOLLOW A USER
-        let user = 'USER_TO_FOLLOW';
+        const follow = 'USER_TO_FOLLOW';
         axios
           .put(
-            `https://api.github.com/user/following/${user}`,
+            `https://api.github.com/user/following/${follow}`,
             {},
             {
               headers: {
